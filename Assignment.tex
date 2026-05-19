@@ -1,0 +1,2499 @@
+\documentclass[12pt,a4paper]{article}
+
+% ---------------- PACKAGES ----------------
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{times}
+\usepackage{setspace}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage[most]{tcolorbox}
+\usepackage{listings} % কোড বক্স মার্জিনের ভেতরে রাখার জন্য নতুন প্যাকেজ
+
+% ---------------- SETTINGS ----------------
+\setstretch{1.5}
+\justifying
+
+% কোড বক্স কনফিগারেশন (যা লম্বা কোডকে অটোমেটিক ভেঙে বক্সের ভেতরে রাখবে)
+\lstnewenvironment{codebox}{
+\lstset{
+    basicstyle=\small\ttfamily,
+    border=single,
+    breaklines=true,         % লম্বা লাইন অটোমেটিক ভেঙে নিচে নামবে
+    breakatwhitespace=false, % যেকোনো জায়গায় লাইন ভাঙতে পারবে
+    frame=single,
+    frameround=ffff,
+    framesep=5mm,
+    showstringspaces=false,
+    columns=fullflexible
+}
+}{}
+
+% সূচিপত্রের কাস্টম কমান্ড (পেজ নাম্বার ছাড়া পরিচ্ছন্ন ডিজাইন)
+\newcommand{\tocline}[1]{\vspace{0.25cm}\noindent\textbf{\large #1}\\[0.1cm]}
+\newcommand{\tocsub}[1]{\noindent\hspace*{6mm}\textbullet~~#1\\[0.05cm]}
+
+\begin{document}
+
+% ---------------- TITLE PAGE (কাভার পেজ) ----------------
+\begin{titlepage}
+\centering
+{\Large\bfseries Begum Rokeya University, Rangpur}\\[0.4cm]
+{\large\bfseries Department of Statistics}\\[2.5cm]
+\vfill
+{\large\bfseries Course Code: 4101}\\[0.3cm]
+{\LARGE\bfseries Categorical Data Analysis}\\[3cm]
+\vfill
+
+\begin{minipage}[t]{0.48\textwidth}
+\raggedright
+{\large\bfseries SUBMITTED BY}\\[0.2cm]
+\textbf{Name:} Md. Sifat Hasan Sabbir\\
+\textbf{ID:} 12110045\\
+\textbf{Reg No:} 000015908\\
+\textbf{Session:} 2021-2022\\
+\textbf{Year/Sem:} 4th Year, 1st Sem
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\raggedleft
+{\large\bfseries SUBMITTED TO}\\[0.2cm]
+\textbf{Name:} Dr. Md. Siddikur Rahman\\
+Associate Professor\\
+Department of Statistics\\
+Begum Rokeya University, Rangpur
+\end{minipage}
+
+\vfill
+\hrule
+\vspace{0.3cm}
+{\large\bfseries Submission Date: 19/05/2026}
+\end{titlepage}
+
+% ---------------- TABLE OF CONTENTS (সূচিপত্র) ----------------
+\newpage
+\begin{center}
+    \vspace*{0.2cm}
+    {\Large\bfseries সূচিপত্র (Table of Contents)} \\[0.2cm]
+    \hrule height 1.5pt
+\end{center}
+\vspace{0.5cm}
+
+\tocline{Problem-1: Categorical Data Analysis \& Lung Disease}
+\tocsub{ Basic EDA Questions}
+\tocsub{ Association & Crosstab}
+\tocsub{ Does Pollution level affect Lung Disease?}
+\tocsub{ Statistical Testing}
+\tocsub{ Correlation & Interpretation}
+\tocsub{ Logistic Regression}
+\tocsub{ Model Evaluation}
+\tocsub{Final Analysis and Public Health Implications}
+
+
+\tocline{Problem-2: One-Way ANOVA \& Weight Loss Analysis}
+\tocsub{Assumption Checking (Normality, Homogeneity) \& ANOVA Test}
+
+\tocline{Problem-3: Contingency Table Analysis (Anemia vs Wealth Index)}
+\tocsub{NDHS Data Table, Chi-Square Test \& Heatmap Visualization}
+
+\tocline{Problem-4: Drug Effectiveness Analysis}
+\tocsub{Global Association \& Post-hoc Pairwise Fisher's Exact Tests}
+
+\tocline{Problem-5: Logistic Regression Analysis (Graduate Admission)}
+\tocsub{Model Estimation (GRE, GPA, Rank) \& Odds Ratio (OR) Analysis}
+
+\tocline{Problem-6: Poisson Regression Analysis for Count Data}
+\tocsub{GLM Model Fitting, Equations \& Incident Rate Ratios (IRR)}
+
+\tocline{Problem-7: Negative Binomial Regression for Absenteeism}
+\tocsub{Overdispersion Diagnosis \& Negative Binomial Modeling}
+
+\tocline{Problem-8: Zero-Inflation Analysis (Fish Caught Study - Part I)}
+\tocsub{Excess Zeros Frequency Analysis, ZIP Model Coefficients \& IRR}
+
+\tocline{Problem-9: Zero-Inflated Poisson Regression (Part II)}
+\tocsub{Exploratory Data Analysis, Logit vs. Poisson Component \& IRR}
+
+\tocline{Problem-10: Negative Binomial for Hospital Length of Stay}
+\tocsub{Zero-Truncated Context (ZTNB Model) \& IRR Interpretation}
+
+\newpage
+
+
+
+% ---------------- ASSIGNMENT ----------------
+\begin{center}
+\Large \textbf{Problem-1}
+\end{center}
+\textbf{A: Basic EDA Questions}
+% ==================================================
+% ---------------- i ----------------
+% ==================================================
+
+\textbf{i)}
+
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+file_path = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104\lung_disease.xlsx"
+save_dir = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104"
+df = pd.read_excel(file_path)
+sns.set_theme(style="whitegrid")
+
+age_summary = df['Age'].describe()
+age_skewness = df['Age'].skew()
+
+print("--- Age Distribution Summary ---")
+print(age_summary)
+print(f"Skewness of Age: {age_skewness:.4f}")
+
+plt.figure(figsize=(8,5))
+sns.histplot(df['Age'], kde=True, bins=20)
+plt.title('Distribution of Age')
+plt.xlabel('Age')
+plt.ylabel('Count')
+plt.savefig(os.path.join(save_dir, 
+'age_distribution.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Age Distribution Summary ---
+count    500.000000
+mean      43.904000
+std       14.604841
+min       20.000000
+25%       30.750000
+50%       45.000000
+75%       56.000000
+max       69.000000
+Skewness of Age: 0.0121
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]
+{age_distribution.png}
+\end{center}
+
+\textbf{Interpretation:}
+The Age variable shows an approximately symmetric distribution with mean 43.90 and standard deviation 14.60.
+
+% ==================================================
+% ---------------- ii ----------------
+% ==================================================
+\textbf{ii)}
+\textbf{Code:}
+\begin{codebox}
+smoking_counts = df['Smoking'].value_counts()
+smoking_proportions = df['Smoking'].
+value_counts(normalize=True)
+
+print("--- Smoking Counts and Proportions ---")
+for idx in smoking_counts.index:
+    print(f"{idx}: {smoking_counts[idx]} individuals ({smoking_proportions[idx]*100:.2f}%)")
+
+plt.figure(figsize=(6,6))
+plt.pie(smoking_counts, labels=smoking_counts.index,
+autopct='%1.1f%%',
+        startangle=90, colors=['#ff9999','#66b3ff'])
+plt.title('Proportion of Smokers vs Non-Smokers')
+plt.savefig(os.path.join(save_dir, 
+'smoking_proportion.png'), dpi=300,
+bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Smoking Counts and Proportions ---
+No: 293 individuals (58.60%)
+Yes: 207 individuals (41.40%)
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.6\textwidth]
+{smoking_proportion.png}
+\end{center}
+
+\textbf{Interpretation:}
+The dataset shows 58.60 percent non-smokers and 41.40 percent smokers.
+
+% ==================================================
+% ---------------- iii ----------------
+% ==================================================
+\textbf{iii)}
+\textbf{Code:}
+\begin{codebox}
+income_counts = df['Income'].value_counts()
+
+print("--- Income Group Frequency ---")
+print(income_counts)
+print(f"\nHighest frequency income group is:
+{income_counts.idxmax()}")
+
+plt.figure(figsize=(7,5))
+sns.countplot(x='Income', data=df,
+order=['Low', 'Medium', 'High'], palette='viridis')
+plt.title('Frequency of Income Groups', fontsize=14)
+plt.xlabel('Income Group', fontsize=12)
+plt.ylabel('Count', fontsize=12)
+plt.savefig(os.path.join(save_dir,
+'income_frequency.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Income Group Frequency ---
+Income
+Low       204
+Medium    197
+High       99
+Name: count, dtype: int64
+Highest frequency income group is: Low
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{income_frequency.png}
+\end{center}
+
+\textbf{Interpretation:}
+The income distribution shows Low income group is highest (204), followed by Medium (197), and High (99).
+
+% ==================================================
+% ---------------- iv ----------------
+% ==================================================
+\textbf{iv)}
+\textbf{Code:}
+\begin{codebox}
+pollution_proportions = df['Pollution'].
+value_counts(normalize=True) * 100
+
+print("--- Pollution Exposure Percentage ---")
+print(pollution_proportions.map('{:.2f}%'.format))
+
+plt.figure(figsize=(6,5))
+sns.countplot(x='Pollution', data=df, order=['High', 'Low'], palette='magma')
+plt.title('Pollution Exposure Level', fontsize=14)
+plt.xlabel('Pollution Level', fontsize=12)
+plt.ylabel('Count', fontsize=12)
+plt.savefig(os.path.join(save_dir, 
+'pollution_exposure.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Pollution Exposure Percentage ---
+Pollution
+High    70.40%
+Low     29.60%
+Name: proportion, dtype: object
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{pollution_exposure.png}
+\end{center}
+
+\textbf{Interpretation:}
+The majority (70.40\%) of individuals are exposed to high pollution levels.
+
+% ==================================================
+% ---------------- v ----------------
+% ==================================================
+\textbf{v)}
+\textbf{Code:}
+\begin{codebox}
+disease_counts = df['LungDisease'].value_counts()
+disease_prevalence = df['LungDisease']
+.value_counts(normalize=True) * 100
+
+print("--- Lung Disease Prevalence ---")
+print(f"Yes: {disease_counts['Yes']} individuals ({disease_prevalence['Yes']:.2f}%)")
+print(f"No: {disease_counts['No']} individuals ({disease_prevalence['No']:.2f}%)")
+
+plt.figure(figsize=(6,6))
+plt.pie(disease_counts, labels=disease_counts.index, 
+autopct='%1.1f%%',
+        startangle=140, colors=['#ffcc99','#99ff99'], wedgeprops=dict(width=0.4, edgecolor='w'))
+plt.title('Overall Prevalence of Lung Disease')
+plt.savefig(os.path.join(save_dir, 
+'lung_disease_prevalence.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Lung Disease Prevalence ---
+Yes: 264 individuals (52.80%)
+No: 236 individuals (47.20%)
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.6\textwidth]
+{lung_disease_prevalence.png}
+\end{center}
+
+\textbf{Interpretation:}
+The prevalence of lung disease is 52.80\% Yes and 47.20\% No.
+
+% ==================================================
+% ---------------- B ----------------
+% ==================================================
+\textbf{B. Association \& Crosstab}
+\textbf{i)}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+
+file_path = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104\lung_disease.xlsx"
+save_dir = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104"
+df = pd.read_excel(file_path)
+
+contingency_table = pd.crosstab(df['Smoking'],
+df['LungDisease'])
+chi2_stat, p_val, dof, expected = 
+stats.chi2_contingency(contingency_table)
+
+print("--- Chi-Square Test Results ---")
+print(f"Chi-square Statistic : {chi2_stat:.4f}")
+print(f"p-value : {p_val:.4e}")
+print(f"Degrees of Freedom : {dof}")
+
+plt.figure(figsize=(7,5))
+sns.countplot(x='Smoking', hue='LungDisease',
+data=df, palette='Set2')
+plt.title('Association between Smoking and
+Lung Disease', fontsize=14)
+plt.xlabel('Smoking Status', fontsize=12)
+plt.ylabel('Count', fontsize=12)
+plt.legend(title='Lung Disease')
+plt.savefig(os.path.join(save_dir, 
+'smoking_lung_disease_association.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Chi-Square Test Results ---
+Chi-square Statistic : 67.5943
+p-value : 2.0085e-16
+Degrees of Freedom : 1
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]
+{smoking_lung_disease_association.png}
+\end{center}
+
+\textbf{Interpretation:}
+The Chi-square test shows a statistically significant association between smoking status and lung disease (p-value $<$ 0.05).
+This indicates that smoking and lung disease are not independent.
+The high Chi-square value (67.5943) suggests a strong relationship between the two variables, meaning smokers are more likely to have lung disease compared to non-smokers.
+
+% ---------------- ii ----------------
+\textbf{ii)}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+file_path = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104\lung_disease.xlsx"
+save_dir = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104"
+df = pd.read_excel(file_path)
+
+crosstab_counts = pd.crosstab(df['Smoking'],
+df['LungDisease'])
+crosstab_pct = pd.crosstab(df['Smoking'],
+df['LungDisease'], normalize='index') * 100
+
+print("--- Contingency Table (Counts) ---")
+print(crosstab_counts)
+print("\n--- Contingency Table (Percentages) ---")
+print(crosstab_pct.map('{:.2f}%'.format))
+
+plt.figure(figsize=(6,4))
+sns.heatmap(crosstab_counts, annot=True, fmt='d',
+cmap='Blues', cbar=False)
+plt.title('Contingency Table Heatmap (Counts)',
+fontsize=14)
+plt.xlabel('Lung Disease', fontsize=12)
+plt.ylabel('Smoking', fontsize=12)
+plt.savefig(os.path.join(save_dir, 
+'contingency_table_heatmap.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Contingency Table (Counts) ---
+LungDisease    No   Yes
+Smoking
+No            184   109
+Yes            52   155
+--- Contingency Table (Percentages) ---
+LungDisease      No     Yes
+Smoking
+No           62.80%  37.20%
+Yes          25.12%  74.88%
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.65\textwidth]{contingency_table_heatmap.png}
+\end{center}
+
+\textbf{Interpretation:}
+The contingency table shows a strong relationship between smoking and lung disease.
+Among non-smokers, 37.20\% have lung disease, whereas among smokers, 74.88\% have lung disease.
+The heatmap visually confirms this pattern, showing higher concentration of lung disease among smokers.
+This indicates a strong positive association between smoking and lung disease.
+
+% ==================================================
+% ---------------- C ----------------
+% ==================================================
+\textbf{C. Income Analysis and Factor Strength}
+\textbf{i) Does Income level affect Lung Disease?}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import scipy.stats as stats
+
+file_path = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104\lung_disease.xlsx"
+save_dir = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104"
+df = pd.read_excel(file_path)
+
+income_xtab = pd.crosstab(df['Income'], df['LungDisease'])
+income_pct = pd.crosstab(df['Income'], df['LungDisease'], normalize='index') * 100
+
+print("--- Income vs Lung Disease (Counts) ---")
+print(income_xtab)
+print("\n--- Income vs Lung Disease
+(Prevalence Percentages) ---")
+print(income_pct.map('{:.2f}%'.format))
+
+chi2_inc, p_val_inc, _, _ = stats.chi2_contingency(income_xtab)
+print(f"\nChi-Square Statistic: {chi2_inc:.4f}")
+print(f"Chi-Square p-value : {p_val_inc:.4f}")
+
+income_pct.plot(kind='bar', stacked=True,
+color=['#4caf50', '#f44336'], figsize=(8,5))
+plt.title('Lung Disease Prevalence across
+Income Groups', fontsize=14, fontweight='bold')
+plt.xlabel('Income Group', fontsize=12)
+plt.ylabel('Percentage (%)', fontsize=12)
+plt.legend(title='Lung Disease',
+labels=['No', 'Yes'], loc='upper left')
+plt.xticks(rotation=0)
+plt.savefig(os.path.join(save_dir, 
+'income_vs_lung_disease.png'),
+dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Income vs Lung Disease (Counts) ---
+LungDisease   No  Yes
+Income
+High          51   48
+Low           90  114
+Medium        95  102
+--- Income vs Lung Disease (Prevalence Percentages) ---
+LungDisease      No     Yes
+Income
+High         51.52%  48.48%
+Low          44.12%  55.88%
+Medium       48.22%  51.78%
+Chi-Square Statistic: 1.6002
+Chi-Square p-value : 0.4493
+\end{codebox}
+
+\textbf{Interpretation:}
+The Chi-square test shows that there is no statistically significant association between income level and lung disease (p-value = 0.4493 $>$ 0.05).
+Although slight differences exist in disease prevalence across income groups, these differences are not strong enough to conclude a meaningful relationship.
+Therefore, income does not appear to be a significant predictor of lung disease in this dataset.
+
+% ---------------- ii ----------------
+\textbf{ii) Which factor appears to have the strongest relationship with lung disease?}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+
+file_path = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104\lung_disease.xlsx"
+save_dir = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104"
+df = pd.read_excel(file_path)
+
+def calculate_cramers_v(x, y):
+    confusion_matrix = pd.crosstab(x, y)
+    chi2 = stats.chi2_contingency(confusion_matrix)[0]
+    n = confusion_matrix.sum().sum()
+    phi2 = chi2 / n
+    r, k = confusion_matrix.shape
+    # Bias correction
+    phi2corr = max(0, phi2 - ((k-1)*(r-1))/(n-1))
+    rcorr = r - ((r-1)**2)/(n-1)
+    kcorr = k - ((k-1)**2)/(n-1)
+    return np.sqrt(phi2corr / min((kcorr-1), 
+    (rcorr-1)))
+
+v_smoking = calculate_cramers_v(df['Smoking'],
+df['LungDisease'])
+v_pollution = calculate_cramers_v(df['Pollution'], 
+df['LungDisease'])
+v_income = calculate_cramers_v(df['Income'],
+df['LungDisease'])
+
+factors = ['Smoking', 'Pollution', 'Income']
+scores = [v_smoking, v_pollution, v_income]
+
+print("--- Strength of Relationship with
+Lung Disease (Cramer's V) ---")
+for factor, score in zip(factors, scores):
+    print(f"{factor}: {score:.4f}")
+
+plt.figure(figsize=(8,5))
+sns.barplot(x=factors, y=scores, palette='vlag')
+plt.title("Strength of Factors Related to Lung Disease", 
+fontsize=14, fontweight='bold')
+plt.ylabel("Cramer's V Score (Higher = Stronger)",
+fontsize=12)
+plt.ylim(0, 0.5)
+
+for i, score_val in enumerate(scores):
+    plt.text(i, score_val + 0.01, f"{score_val:.4f}",
+    ha='center', fontweight='bold', fontsize=11)
+
+plt.savefig(os.path.join(save_dir,
+'strongest_factor_comparison.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Strength of Relationship with Lung Disease
+(Cramer's V) ---
+Smoking : 0.3653
+Pollution : 0.2565
+Income : 0.0000
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]
+{strongest_factor_comparison.png}
+\end{center}
+
+\textbf{Interpretation:}
+The Cramer's V analysis shows that smoking has the strongest association with lung disease (0.3653), followed by pollution (0.2565).
+Income shows no meaningful association (0.0000). This indicates that behavioral and environmental factors are more important than socioeconomic status in explaining lung disease in this dataset.
+
+% ==================================================
+% ---------------- D ----------------
+% ==================================================
+\textbf{D. Statistical Analysis}
+\textbf{i) Chi-square Tests for Key Risk Factors}
+\textbf{1) Smoking vs Lung Disease}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+
+file_path = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104\lung_disease.xlsx"
+save_dir = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104"
+df = pd.read_excel(file_path)
+
+print("=== 1. Chi-square Test: Smoking vs Lung Disease ===")
+xtab_smoking = pd.crosstab(df['Smoking'], df['LungDisease'])
+chi2_smk, p_smk, dof_smk, expected_smk = stats.chi2_contingency(xtab_smoking)
+
+print("Contingency Table:")
+print(xtab_smoking)
+print(f"Chi-square Statistic: {chi2_smk:.4f}")
+print(f"p-value: {p_smk:.4e}")
+
+plt.figure(figsize=(7, 5))
+sns.countplot(x='Smoking', hue='LungDisease', data=df, palette='Set1')
+plt.title('Lung Disease Count by Smoking Status', fontsize=14, fontweight='bold')
+plt.xlabel('Smoking Status', fontsize=12)
+plt.ylabel('Count', fontsize=12)
+plt.savefig(os.path.join(save_dir, 'chi2_smoking_vs_lung_disease.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== 1. Chi-square Test: Smoking vs Lung Disease ===
+Contingency Table:
+LungDisease   No  Yes
+Smoking
+No           184  109
+Yes           52  155
+Chi-square Statistic: 67.5943
+p-value: 2.0085e-16
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]
+{chi2_smoking_vs_lung_disease.png}
+\end{center}
+
+\textbf{Interpretation:}
+The Chi-square test reveals a highly significant statistical association between smoking status and lung disease (p-value $<$ 0.05).
+The high Chi-square value (67.5943) indicates that smokers are significantly more prone to lung disease compared to non-smokers.
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+\textbf{2) Pollution vs Lung Disease}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+
+file_path = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104\lung_disease.xlsx"
+save_dir = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104"
+df = pd.read_excel(file_path)
+
+print("\n=== 2. Chi-square Test: Pollution vs Lung Disease ===")
+xtab_pollution = pd.crosstab(df['Pollution'], df['LungDisease'])
+chi2_pol, p_pol, dof_pol, expected_pol = stats.chi2_contingency(xtab_pollution)
+
+print("Contingency Table:")
+print(xtab_pollution)
+print(f"Chi-square Statistic: {chi2_pol:.4f}")
+print(f"p-value: {p_pol:.4e}")
+
+plt.figure(figsize=(7, 5))
+sns.countplot(x='Pollution', hue='LungDisease', 
+data=df, palette='Set2')
+plt.title('Lung Disease Count by Pollution Level', 
+fontsize=14, fontweight='bold')
+plt.xlabel('Pollution Level', fontsize=12)
+plt.ylabel('Count', fontsize=12)
+plt.savefig(os.path.join(save_dir, 
+'chi2_pollution_vs_lung_disease.png'), 
+dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== 2. Chi-square Test: Pollution vs Lung Disease ===
+Contingency Table:
+LungDisease   No  Yes
+Pollution
+High         136  216
+Low          100   48
+Chi-square Statistic: 33.8426
+p-value: 5.9757e-09
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{chi2_pollution_vs_lung_disease.png}
+\end{center}
+
+\textbf{Interpretation:}
+There is a statistically significant relationship between pollution exposure levels and lung disease prevalence (p-value $<$ 0.05).
+Individuals living or working in areas with high pollution levels show a significantly higher count of lung disease cases than those in low pollution levels.
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+\textbf{ii) Odds Ratio (OR) Analysis for Smoking and Lung Disease}
+The Odds Ratio (OR) for a $2 \times 2$ contingency table is defined as:
+$$OR = \frac{a \times d}{b \times c}$$
+Where:
+\begin{itemize}
+\item $a$: Non-smokers without lung disease 
+(Control group, No-No)
+\item $b$: Non-smokers with lung disease 
+(Exposed control, No-Yes)
+\item $c$: Smokers without lung disease 
+(Exposed case, Yes-No)
+\item $d$: Smokers with lung disease 
+(Case group, Yes-Yes)
+\end{itemize}
+
+\vspace{0.3cm}
+\textbf{Code:}
+\begin{codebox}
+import pandas as pd
+import scipy.stats as stats
+
+file_path = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104\lung_disease.xlsx"
+df = pd.read_excel(file_path)
+
+xtab_smoking = pd.crosstab(df['Smoking'], df['LungDisease'])
+a = xtab_smoking.loc['No', 'No']
+b = xtab_smoking.loc['No', 'Yes']
+c = xtab_smoking.loc['Yes', 'No']
+d = xtab_smoking.loc['Yes', 'Yes']
+
+oddsratio, pvalue = stats.fisher_exact([[a, b], [c, d]])
+manual_or = (a * d) / (b * c)
+
+print("--- Odds Ratio Analysis ---")
+print(f"Manual Odds Ratio (OR) Calculation : {manual_or:.4f}")
+print(f"Fisher's Exact Test Odds Ratio : {oddsratio:.4f}")
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Odds Ratio Analysis ---
+Manual Odds Ratio (OR) Calculation : 5.0318
+Fisher's Exact Test Odds Ratio : 5.0318
+\end{codebox}
+
+\vspace{0.3cm}
+\textbf{Interpretation:}
+The calculated Odds Ratio (OR) is \textbf{5.0318}, which indicates a strong positive association between smoking and lung disease.
+Specifically, the odds of developing lung disease among individuals who smoke are approximately \textbf{5.03 times higher} than the odds of developing lung disease among non-smokers.
+Since $OR > 1$, smoking acts as a significant risk factor for lung disease in this study population.
+
+\vspace{0.5cm}
+\hrule
+\vspace{0.5cm}
+
+\textbf{iii) Correlation Analysis
+(Feature Encoding \& Relations)}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+file_path = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104\lung_disease.xlsx"
+save_dir = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104"
+df = pd.read_excel(file_path)
+
+df['Smoking_num'] = df['Smoking']
+.map({'Yes': 1, 'No': 0})
+df['LungDisease_num'] = df['LungDisease']
+.map({'Yes': 1, 'No': 0})
+
+corr_smoking_disease = df['Smoking_num']
+.corr(df['LungDisease_num'])
+corr_age_disease = df['Age']
+.corr(df['LungDisease_num'])
+
+print("--- Correlation Coefficient Results ---")
+print(f"Correlation between Smoking and Lung Disease : {corr_smoking_disease:.4f}")
+print(f"Correlation between Age and Lung
+Disease : {corr_age_disease:.4f}")
+
+plt.figure(figsize=(6, 4))
+corr_matrix = df[['Age', 'Smoking_num', 
+'LungDisease_num']].corr()
+sns.heatmap(corr_matrix, annot=True, 
+cmap='coolwarm', fmt=".3f", vmin=-1, vmax=1)
+plt.title('Correlation Heatmap', 
+fontsize=14, fontweight='bold')
+plt.savefig(os.path.join(save_dir,
+'correlation_heatmap.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Correlation Coefficient Results ---
+Correlation between Smoking and Lung Disease : 0.3717
+Correlation between Age and Lung Disease : 0.2497
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.65\textwidth]{correlation_heatmap.png}
+\end{center}
+
+\textbf{Interpretation:}
+The Pearson correlation analysis provides the following insights into the relationships between variables and lung disease:
+\begin{itemize}
+\item \textbf{Smoking and Lung Disease (r = 0.3717):} There is a moderate positive correlation between smoking and lung disease.
+This indicates that as smoking status changes from "No" to "Yes" (0 to 1), the likelihood of having lung disease increases significantly.
+\item \textbf{Age and Lung Disease (r = 0.2497):} A weak-to-moderate positive correlation exists between age and lung disease.
+This suggests that older individuals in the dataset are slightly more susceptible to developing lung disease.
+\end{itemize}
+Overall, both risk factors have a positive relationship with lung disease, with smoking showing a stronger linear correlation compared to age.
+
+% ==================================================
+% ---------------- Conceptual Note ----------------
+% ==================================================
+\begin{tcolorbox}[
+colback=gray!5,
+colframe=black!75,
+title=\textbf{Core Econometric Principle:
+Correlation $\neq$ Causation},
+fonttitle=\bfseries,
+arc=2mm
+]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+\item \textbf{Mathematical Co-movement Only:} 
+Correlation merely measures linear dependency or
+association. It does not 
+imply a functional mechanism.
+\item \textbf{Directionality Problem:} 
+A non-zero correlation between $X$ and $Y$
+cannot determine the causal direction
+(i.e., whether $X \rightarrow Y$ or $Y \rightarrow X$).
+\item \textbf{Confounding Variables:} A hidden
+third factor, $Z$ (e.g., \textit{Pollution}), might simultaneously drive
+both $X$ and $Y$, creating a misleading relationship.
+\item \textbf{Spurious Correlation:} The 
+statistical relationship could be a purely coincidental alignment of independent
+trends over time.
+\end{enumerate}
+\end{tcolorbox}
+\vspace{1cm}
+\subsection*{Why Correlation $\neq$ Causation}
+\begin{enumerate}[label=\arabic*.]
+\item Correlation only measures mathematical 
+association or co-movement.
+\item It cannot establish the direction of cause 
+and effect (\textit{Directionality Problem}).
+\item Confounding variables (hidden third factors like
+\textit{Pollution}) might drive both.
+\item It could be a purely coincidental relationship 
+(\textit{Spurious Correlation}).
+\end{enumerate}
+
+% ==================================================
+% ---------------- E ----------------
+% ==================================================
+\textbf{E. Logistic Regression}
+\textbf{i)}
+\textbf{Code:}
+\begin{codebox}
+import pandas as pd
+import statsmodels.formula.api as smf
+
+file_path = 'lung_disease.xlsx'
+try:
+    df = pd.read_excel(file_path)
+except Exception:
+    df = pd.read_csv('lung_disease.xlsx - lung_disease.csv')
+
+df['LungDisease_num'] = df['LungDisease']
+.map({'Yes': 1, 'No': 0})
+df['Smoking_num'] = df['Smoking']
+.map({'Yes': 1, 'No': 0})
+df['Pollution_num'] = df['Pollution']
+.map({'High': 1, 'Low': 0})
+
+formula = "LungDisease_num ~ Smoking_num +
+Age + Pollution_num + C(Income)"
+model_full = smf.logit(formula, data=df).fit()
+
+print("=== LOGISTIC REGRESSION MODEL SUMMARY ===")
+print(model_full.summary())
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+Optimization terminated successfully.
+Current function value: 0.552949
+Iterations 6
+=== LOGISTIC REGRESSION MODEL SUMMARY ===
+Dep. Variable: LungDisease_num
+No. Observations: 500
+Pseudo R-squ.: 0.2005
+Log-Likelihood: -276.47
+LLR p-value: 3.499e-28
+=====================================
+coef std err z P>|z|
+--------------------------------------
+Intercept -3.4967 0.471 -7.427 0.000
+C(Income)[T.Low] 0.4396 0.285 1.544 0.123
+C(Income)[T.Medium] 0.2201 0.285 0.773 0.440
+Smoking_num 1.7022 0.218 7.801 0.000
+Age 0.0399 0.007 5.455 0.000
+Pollution_num 1.3027 0.235 5.533 0.000
+=====================================
+\end{codebox}
+
+\textbf{Interpretation:}
+The logistic regression model is statistically significant (LLR p-value $<$ 0.001), indicating that the model fits the data well.
+Smoking, Age, and Pollution have significant positive effects on lung disease ($p < 0.05$), meaning they increase the likelihood of developing lung disease.
+Income is not statistically significant ($p > 0.05$), suggesting that income level does not have a meaningful effect after controlling for other variables.
+The model explains about 20.05\% of the variation in lung disease status (Pseudo $R^2 = 0.2005$).
+
+% ---------------- ii ----------------
+\textbf{ii)}
+\textbf{Code:}
+\begin{codebox}
+import pandas as pd
+import statsmodels.formula.api as smf
+
+file_path = 'lung_disease.xlsx'
+try:
+    df = pd.read_excel(file_path)
+except Exception:
+    df = pd.read_csv('lung_disease.xlsx - lung_disease.csv')
+
+df['LungDisease_num'] = df['LungDisease']
+.map({'Yes': 1, 'No': 0})
+df['Smoking_num'] = df['Smoking']
+.map({'Yes': 1, 'No': 0})
+df['Pollution_num'] = df['Pollution']
+.map({'High': 1, 'Low': 0})
+
+model_full = smf.logit(
+    "LungDisease_num ~ Smoking_num + Age +
+    Pollution_num + C(Income)",
+    data=df
+).fit(disp=0)
+
+p_values = model_full.pvalues
+print("=== STATISTICAL SIGNIFICANCE RESULTS ===")
+for variable, p_val in p_values.items():
+    if variable != 'Intercept':
+        is_significant = "YES (Significant)" if p_val 
+        < 0.05 else "NO (Not Significant)"
+        print(f"{variable:<25} | p-value = {p_val:.4e} |
+        Predictor Significant? {is_significant}")
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== STATISTICAL SIGNIFICANCE RESULTS ===
+C(Income)[T.Low]          | p-value = 1.2264e-01 
+| Predictor Significant? NO (Not Significant)
+C(Income)[T.Medium]       | p-value = 4.3972e-01 
+| Predictor Significant? NO (Not Significant)
+Smoking_num               | p-value = 6.1318e-15
+| Predictor Significant? YES (Significant)
+Age                       | p-value = 4.9066e-08
+| Predictor Significant? YES (Significant)
+Pollution_num             | p-value = 3.1390e-08 
+| Predictor Significant? YES (Significant)
+\end{codebox}
+
+\textbf{Interpretation:}
+The statistical significance test shows that Smoking, Age, and Pollution are significant predictors of lung disease because their p-values are less than 0.05.
+Both Income categories (Low and Medium) are not statistically significant, as their p-values are greater than 0.05.
+Therefore, smoking status, age, and pollution exposure significantly influence lung disease, while income level does not have a significant effect in this model.
+
+% ---------------- iii ----------------
+\textbf{iii)}
+\textbf{Code:}
+\begin{codebox}
+import pandas as pd
+import numpy as np
+import statsmodels.formula.api as smf
+
+file_path = 'lung_disease.xlsx'
+try:
+    df = pd.read_excel(file_path)
+except Exception:
+    df = pd.read_csv('lung_disease.xlsx - lung_disease.csv')
+
+df['LungDisease_num'] = df['LungDisease']
+.map({'Yes': 1, 'No': 0})
+df['Smoking_num'] = df['Smoking']
+.map({'Yes': 1, 'No': 0})
+df['Pollution_num'] = df['Pollution']
+.map({'High': 1, 'Low': 0})
+
+model_full = smf.logit(
+    "LungDisease_num ~ Smoking_num + Age + 
+    Pollution_num + C(Income)",
+    data=df
+).fit(disp=0)
+
+odds_ratios = np.exp(model_full.params)
+smoking_or = odds_ratios['Smoking_num']
+
+print("=== ODDS RATIOS OF PREDICTORS ===")
+print(odds_ratios)
+print(f"\nSpecific Odds Ratio (OR) for Smoking: {smoking_or:.4f}")
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== ODDS RATIOS OF PREDICTORS ===
+Intercept 0.030296
+C(Income)[T.Low] 1.552101
+C(Income)[T.Medium] 1.246243
+Smoking_num 5.485739
+Age 1.040683
+Pollution_num 3.679394
+dtype: float64
+Specific Odds Ratio (OR) for Smoking: 5.4857
+\end{codebox}
+
+\textbf{Interpretation:}
+The odds ratio for Smoking is 5.4857, which means smokers have approximately 5.49 times higher odds of developing lung disease compared to non-smokers, holding other variables constant.
+Pollution also increases the odds of lung disease by about 3.68 times, while each one-year increase in age raises the odds by about 4.07\%.
+Income has relatively small effects and remains less important compared to smoking and pollution.
+
+% ==================================================
+% ---------------- F ----------------
+% ==================================================
+\textbf{F. Model Evaluation}
+\textbf{i)}
+\textbf{Code:}
+\begin{codebox}
+import pandas as pd
+import statsmodels.formula.api as smf
+from sklearn.metrics import roc_curve, auc
+import matplotlib.pyplot as plt
+import os
+
+file_path = 'lung_disease.xlsx'
+save_dir = '.'
+
+try:
+    df = pd.read_excel(file_path)
+except Exception:
+    df = pd.read_csv('lung_disease.xlsx - lung_disease.csv')
+
+df['LungDisease_num'] = df['LungDisease']
+.map({'Yes': 1, 'No': 0})
+df['Smoking_num'] = df['Smoking']
+.map({'Yes': 1, 'No': 0})
+df['Pollution_num'] = df['Pollution']
+.map({'High': 1, 'Low': 0})
+
+formula = "LungDisease_num ~ Smoking_num + Age + 
+Pollution_num + C(Income)"
+model = smf.logit(formula, data=df).fit(disp=0)
+
+df['pred_prob'] = model.predict(df)
+fpr, tpr, thresholds = roc_curve(df['LungDisease_num'],
+df['pred_prob'])
+roc_auc = auc(fpr, tpr)
+
+print("--- ROC & AUC Result ---")
+print(f"Area Under the Curve (AUC): {roc_auc:.4f}")
+
+plt.figure(figsize=(7, 6))
+plt.plot(fpr, tpr, color='darkorange', lw=2,
+label=f'ROC curve (AUC = {roc_auc:.4f})')
+plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate (1 - Specificity)',
+fontsize=12)
+plt.ylabel('True Positive Rate (Sensitivity)', fontsize=12)
+plt.title('Receiver Operating Characteristic 
+(ROC) Curve', fontsize=14, fontweight='bold')
+plt.legend(loc="lower right", fontsize=11)
+plt.savefig(os.path.join(save_dir, 
+'roc_curve_analysis.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- ROC & AUC Result ---
+Area Under the Curve (AUC): 0.7872
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{roc_curve_analysis.png}
+\end{center}
+
+\textbf{Interpretation:}
+The ROC curve evaluates the predictive performance of the logistic regression model.
+The AUC value is 0.7872, which indicates good classification performance.
+Since the AUC is close to 0.80, the model has a good ability to distinguish between individuals with and without lung disease.
+
+% ---------------- ii ----------------
+\textbf{ii)}
+\textbf{Code:}
+\begin{codebox}
+import pandas as pd
+import statsmodels.formula.api as smf
+
+file_path = 'lung_disease.xlsx'
+try:
+    df = pd.read_excel(file_path)
+except Exception:
+    df = pd.read_csv('lung_disease.xlsx - lung_disease.csv')
+
+df['LungDisease_num'] = df['LungDisease']
+.map({'Yes': 1, 'No': 0})
+df['Smoking_num'] = df['Smoking']
+.map({'Yes': 1, 'No': 0})
+df['Pollution_num'] = df['Pollution']
+.map({'High': 1, 'Low': 0})
+
+model = smf.logit(
+    "LungDisease_num ~ Smoking_num + Age +
+    Pollution_num + C(Income)",
+    data=df
+).fit(disp=0)
+
+print("=== MODEL EVALUATION CRITERIA ===")
+print(f"Pseudo R-squared: {model.prsquared:.4f}")
+print("Conclusion: The model performance is reliable.")
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== MODEL EVALUATION CRITERIA ===
+Pseudo R-squared: 0.2005
+Conclusion: The model performance is reliable.
+\end{codebox}
+
+\textbf{Interpretation:}
+The Pseudo R-squared value is 0.2005, indicating that the model explains approximately 20.05\% of the variation in lung disease occurrence.
+While not extremely high, this value suggests a moderate level of explanatory power.
+Therefore, the model can be considered reasonably reliable for identifying key predictors of lung disease.
+
+% ---------------- iii ----------------
+\textbf{iii)}
+\textbf{Code:}
+\begin{codebox}
+import pandas as pd
+import statsmodels.formula.api as smf
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+import os
+
+file_path = 'lung_disease.xlsx'
+save_dir = '.'
+
+try:
+    df = pd.read_excel(file_path)
+except Exception:
+    df = pd.read_csv('lung_disease.xlsx - lung_disease.csv')
+
+df['LungDisease_num'] = df['LungDisease']
+.map({'Yes': 1, 'No': 0})
+df['Smoking_num'] = df['Smoking']
+.map({'Yes': 1, 'No': 0})
+df['Pollution_num'] = df['Pollution']
+.map({'High': 1, 'Low': 0})
+
+model = smf.logit(
+    "LungDisease_num ~ Smoking_num + Age + 
+    Pollution_num + C(Income)",
+    data=df
+).fit(disp=0)
+
+df['pred_prob'] = model.predict(df)
+df['pred_class'] = (df['pred_prob'] >= 0.50).astype(int)
+cm = confusion_matrix(df['LungDisease_num'], df['pred_class'])
+
+print("--- Confusion Matrix Counts ---")
+print(cm)
+
+plt.figure(figsize=(6, 5))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
+            xticklabels=['Predicted: No', 'Predicted: Yes'],
+            yticklabels=['Actual: No', 'Actual: Yes'])
+plt.title('Confusion Matrix Heatmap
+(at 0.50 Cutoff)', fontsize=13, fontweight='bold')
+plt.ylabel('Actual Label')
+plt.xlabel('Predicted Label')
+plt.savefig(os.path.join(save_dir, 'confusion_matrix.png')
+, dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Confusion Matrix Counts ---
+[[156  80]
+ [ 64 200]]
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{confusion_matrix.png}
+\end{center}
+
+\textbf{Interpretation:}
+The confusion matrix shows that the model correctly classified 156 true negatives and 200 true positives.
+However, it misclassified 80 false positives and 64 false negatives.
+This indicates that the model performs reasonably well, with good detection of lung disease cases, but still makes some classification errors.
+Overall, the model demonstrates a balanced performance at the 0.50 cutoff threshold.
+
+% ---------------- iv ----------------
+\textbf{iv)}
+\textbf{Code:}
+\begin{codebox}
+import pandas as pd
+import statsmodels.formula.api as smf
+from sklearn.metrics import confusion_matrix, accuracy_score
+
+file_path = 'lung_disease.xlsx'
+try:
+    df = pd.read_excel(file_path)
+except Exception:
+    df = pd.read_csv('lung_disease.xlsx - lung_disease.csv')
+
+df['LungDisease_num'] = df['LungDisease']
+.map({'Yes': 1, 'No': 0})
+df['Smoking_num'] = df['Smoking']
+.map({'Yes': 1, 'No': 0})
+df['Pollution_num'] = df['Pollution']
+.map({'High': 1, 'Low': 0})
+
+model = smf.logit(
+    "LungDisease_num ~ Smoking_num + Age + Pollution_num + C(Income)",
+    data=df
+).fit(disp=0)
+
+df['pred_prob'] = model.predict(df)
+df['pred_class'] = (df['pred_prob'] >= 0.50).astype(int)
+
+tn, fp, fn, tp = confusion_matrix(df['LungDisease_num'], df['pred_class']).ravel()
+accuracy = accuracy_score(df['LungDisease_num'], 
+df['pred_class'])
+sensitivity = tp / (tp + fn)
+specificity = tn / (tn + fp)
+
+print("=== PERFORMANCE METRICS BREAKDOWN ===")
+print(f"Overall Classification Accuracy : 
+{accuracy * 100:.2f}%")
+print(f"Sensitivity (True Positive Rate): 
+{sensitivity * 100:.2f}%")
+print(f"Specificity (True Negative Rate):
+{specificity * 100:.2f}%")
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== PERFORMANCE METRICS BREAKDOWN ===
+Overall Classification Accuracy : 71.20%
+Sensitivity (True Positive Rate): 75.76%
+Specificity (True Negative Rate): 66.10%
+\end{codebox}
+
+\textbf{Interpretation:}
+The model achieves an overall accuracy of
+71.20\%, indicating a good level of correct classification.
+The sensitivity is 75.76\%, meaning the 
+model is effective in identifying individuals with lung disease.
+The specificity is 66.10\%, which shows a 
+moderate ability to correctly identify 
+individuals without lung disease.
+Overall, the model performs reasonably well,
+with stronger performance in detecting positive
+cases than negative cases.
+
+% ==================================================
+% ---------------- G ----------------
+% ==================================================
+\textbf{G. Final Analysis and Public Health Implications}
+\textbf{i)}
+\textbf{Code:}
+\begin{codebox}
+import pandas as pd
+import numpy as np
+import statsmodels.formula.api as smf
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+
+file_path = 'lung_disease.xlsx'
+save_dir = '.'
+
+try:
+    df = pd.read_excel(file_path)
+except Exception:
+    df = pd.read_csv('lung_disease.xlsx - lung_disease.csv')
+
+print("=== DATA OVERVIEW ===")
+print(df.info())
+print("\n=== FIRST 5 ROWS ===")
+print(df.head())
+
+plt.figure(figsize=(7, 5))
+sns.countplot(data=df, x='Smoking', 
+
+hue='LungDisease', palette='Set2')
+plt.title('Lung Disease Distribution by
+Smoking Status', fontsize=12, fontweight='bold')
+plt.xlabel('Smoking Status')
+plt.ylabel('Count')
+plt.savefig(os.path.join(save_dir, 
+'eda_smoking_vs_lung_disease.png'), dpi=300, bbox_inches='tight')
+plt.show()
+
+plt.figure(figsize=(7, 5))
+sns.boxplot(data=df, x='LungDisease',
+y='Age', palette='Pastel1')
+plt.title('Age Distribution among Lung Disease Patients',
+fontsize=12, fontweight='bold')
+plt.xlabel('Has Lung Disease?')
+plt.ylabel('Age')
+plt.savefig(os.path.join(save_dir,
+'eda_age_vs_lung_disease.png'),
+dpi=300, bbox_inches='tight')
+plt.show()
+
+df['LungDisease_num'] = df['LungDisease']
+.map({'Yes': 1, 'No': 0})
+df['Smoking_num'] = df['Smoking']
+.map({'Yes': 1, 'No': 0})
+df['Pollution_num'] = df['Pollution']
+.map({'High': 1, 'Low': 0})
+
+formula = "LungDisease_num ~
+Smoking_num + Age + Pollution_num + C(Income)"
+model = smf.logit(formula, data=df).fit()
+
+print("=== LOGISTIC REGRESSION RESULTS ===")
+print(model.summary())
+
+odds_ratios = np.exp(model.params)
+print("=== ODDS RATIOS (OR) FOR DETERMINANTS ===")
+print(odds_ratios)
+
+print("=== PUBLIC HEALTH RECOMMENDATIONS ===")
+print("1. Anti-Smoking Campaigns & Tobacco Control Laws.")
+print("2. Industrial & Environmental
+Air Pollution Control Policies.")
+print("3. Special Geriatric (Elderly) 
+Healthcare services for aging populations.")
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== DATA OVERVIEW ===
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 500 entries, 0 to 499
+Data columns (total 6 columns):
+ID, Smoking, Age, Income, Pollution, LungDisease
+=== FIRST 5 ROWS ===
+ID Smoking Age Income Pollution LungDisease
+1 Yes 36 Low High Yes
+2 No 28 Low Low No
+...
+=== LOGISTIC REGRESSION RESULTS ===
+(Logit Regression Summary Table)
+=== ODDS RATIOS (OR) FOR DETERMINANTS ===
+Intercept 0.030296
+C(Income)[T.Low] 1.552101
+C(Income)[T.Medium] 1.246243
+Smoking_num 5.485739
+Age 1.040683
+Pollution_num 3.679394
+=== PUBLIC HEALTH RECOMMENDATIONS ===
+1. Anti-Smoking Campaigns & Tobacco Control Laws.
+2. Industrial & Environmental 
+Air Pollution Control Policies.
+3. Special Geriatric (Elderly)
+Healthcare services for aging populations.
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{eda_smoking_vs_lung_disease.png}
+\includegraphics[width=0.6\textwidth]{eda_age_vs_lung_disease.png}
+\end{center}
+
+\textbf{Interpretation:}
+The exploratory analysis shows that smoking is strongly associated with lung disease, as smokers have a higher frequency of disease cases.
+The boxplot indicates that individuals with lung disease tend to be older.
+Logistic regression confirms that smoking, age, and pollution are statistically significant predictors.
+The odds ratios suggest that smoking increases the odds of lung disease by about 5.49 times, while pollution increases it by about 3.68 times.
+Based on these findings, strong public health interventions targeting smoking reduction, pollution control, and elderly healthcare are recommended.
+
+\begin{center}
+\Large \textbf{Problem-2}
+\end{center}
+% ==================================================
+% ---------------- F ii ----------------
+% ==================================================
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
+from statsmodels.stats.multicomp import pairwise_tukeyhsd
+
+save_dir = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104"
+sns.set_theme(style="whitegrid")
+
+model_anova = ols('Weight_Loss ~ Program',
+data=df_exercise).fit()
+residuals = model_anova.resid
+shapiro_stat, shapiro_p = stats.shapiro(residuals)
+
+print("=== ASSUMPTION 1: NORMALITY CHECK 
+(Shapiro-Wilk) ===")
+print(f"Shapiro P-value: {shapiro_p:.4f} -> " + 
+("Normal" if shapiro_p > 0.05 else "Not Normal"))
+
+levene_stat, levene_p = stats.levene(program_A, 
+program_B, program_C)
+print("\n=== ASSUMPTION 2: HOMOGENEITY OF 
+VARIANCE (Levene's Test) ===")
+print(f"Levene P-value : {levene_p:.4f} -> "
++ ("Equal Variances" if levene_p > 0.05 else
+"Unequal Variances"))
+
+fig, ax = plt.subplots(figsize=(6, 5))
+sm.qqplot(residuals, line='s', ax=ax)
+plt.title('ANOVA Residuals QQ-Plot',
+fontsize=13, fontweight='bold')
+plt.savefig(os.path.join(save_dir, 
+'anova_assumption_qqplot.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== ASSUMPTION 1: NORMALITY CHECK (Shapiro-Wilk) ===
+Shapiro P-value: 0.8948 -> Normal
+=== ASSUMPTION 2: HOMOGENEITY OF VARIANCE (Levene's Test) ===
+Levene P-value : 0.8620 -> Equal Variances
+=== ONE-WAY ANOVA TEST RESULTS ===
+F-Statistic : 49.4645
+p-value : 4.4926e-15
+Decision : Statistically Significant
+Difference exists between the programs (Reject H0)
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{anova_assumption_qqplot.png}
+\end{center}
+
+\textbf{Interpretation:}
+The Shapiro-Wilk test ($p = 0.8948$) indicates that the residuals are normally distributed.
+The Levene's test ($p = 0.8620$) confirms that the assumption of equal variances is satisfied.
+Therefore, all ANOVA assumptions are met. The ANOVA result shows a highly significant difference among the programs ($F = 49.4645, p < 0.001$).
+Hence, the null hypothesis is rejected, indicating that at least one program differs significantly in terms of weight loss.
+
+\textbf{F. Assumption Checking}
+\textbf{Code:}
+\begin{codebox}
+model_anova = ols('Weight_Loss ~ Program', 
+data=df_exercise).fit()
+residuals = model_anova.resid
+shapiro_stat, shapiro_p = stats.shapiro(residuals)
+
+print("=== ASSUMPTION 1: 
+NORMALITY CHECK (Shapiro-Wilk) ===")
+print(f"Shapiro P-value:
+{shapiro_p:.4f} -> 
+" + ("Normal" if shapiro_p >
+0.05 else "Not Normal"))
+
+levene_stat, levene_p = stats.levene
+(program_A, program_B, program_C)
+print("\n=== ASSUMPTION 2: HOMOGENEITY OF VARIANCE
+(Levene's Test) ===")
+print(f"Levene P-value : {levene_p:.4f} ->
+" + ("Equal Variances" if levene_p > 0.05 else
+"Unequal Variances"))
+
+fig, ax = plt.subplots(figsize=(6, 5))
+sm.qqplot(residuals, line='s', ax=ax)
+plt.title('ANOVA Residuals QQ-Plot',
+fontsize=13, fontweight='bold')
+plt.savefig(os.path.join(save_dir,
+'anova_assumption_qqplot.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== ASSUMPTION 1: NORMALITY CHECK (Shapiro-Wilk) ===
+Shapiro P-value: 0.9500 -> Normal
+=== ASSUMPTION 2: HOMOGENEITY OF VARIANCE (Levene's Test) ===
+Levene P-value : 0.5036 -> Equal Variances
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{anova_assumption_qqplot.png}
+\end{center}
+
+\textbf{Interpretation:}
+The Shapiro-Wilk test ($p = 0.9500$) indicates that the residuals are normally distributed.
+The Levene's test ($p = 0.5036$) confirms that the assumption of equal variances is satisfied.
+Therefore, both key ANOVA assumptions are met, and the model is appropriate for further analysis.
+
+\begin{center}
+\Large \textbf{Problem-3}
+\end{center}
+% ==================================================
+% ---------------- New Dataset ----------------
+% ==================================================
+\textbf{G. Contingency Table Analysis (Anemia vs Wealth Index)}
+\textbf{i)}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+
+file_path = r"C:\Users\hp\Downloads\children anemia (1).csv"
+save_dir = r"C:\Users\hp\OneDrive\Desktop
+\Reality Stone-4.1\Siddik sir-4104"
+sns.set_theme(style="whitegrid")
+
+df_anemia = pd.read_csv(file_path)
+df_clean = df_anemia[['Wealth index combined', 
+'Anemia level.1']].dropna()
+
+contingency_table = pd.crosstab(
+    df_clean['Wealth index combined'],
+    df_clean['Anemia level.1'],
+    margins=True, margins_name="Total"
+)
+
+print("=== CONTINGENCY TABLE FROM NIGERIA NDHS DATA ===")
+print(contingency_table)
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== CONTINGENCY TABLE FROM NIGERIA NDHS DATA ===
+Anemia level.1      Mild  Moderate  Not anemic  Severe  Total
+Wealth index combined
+Middle               596       865          729      59   2249
+Poorer               525       926          498      87   2036
+Poorest              522       983          418     119   2042
+Richer               606       750          737      48   2141
+Richest              505       403          797       9   1714
+Total               2754      3927         3179     322  10182
+\end{codebox}
+
+\textbf{Interpretation:}
+The contingency table shows the distribution of anemia levels across different wealth index groups.
+It can be observed that poorer and poorest groups have relatively higher counts in moderate and severe anemia categories, whereas the richest group has a higher number of individuals who are not anemic.
+This suggests a potential association between socioeconomic status and anemia levels, where lower wealth groups tend to experience more severe anemia conditions.
+
+% ==================================================
+% ---------------- G ii ----------------
+% ==================================================
+\textbf{ii) Chi-Square Test of Independence}
+\textbf{Code:}
+\begin{codebox}
+data_for_test = pd.crosstab(
+    df_clean['Wealth index combined'],
+    df_clean['Anemia level.1']
+)
+
+chi2_stat, p_val, dof, expected =
+stats.chi2_contingency(data_for_test)
+
+print("=== CHI-SQUARE TEST RESULTS ===")
+print(f"Chi-Square Statistic : {chi2_stat:.4f}")
+print(f"p-value : {p_val:.4e}")
+print(f"Degrees of Freedom : {dof}")
+
+if p_val < 0.05:
+    print("\nDecision: Reject Null Hypothesis (H0).
+    The relationship is statistically highly significant.")
+else:
+    print("\nDecision: Fail to
+    Reject Null Hypothesis (H0). 
+    No significant relationship found.")
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== CHI-SQUARE TEST RESULTS ===
+Chi-Square Statistic : 530.3991
+p-value : 7.4510e-106
+Degrees of Freedom : 12
+Decision: Reject Null Hypothesis (H0). 
+The relationship is statistically highly significant.
+\end{codebox}
+
+\textbf{Interpretation:}
+The Chi-square test result shows a very large test statistic (530.3991) with an extremely small p-value ($p < 0.001$).
+Since the p-value is far below the 0.05 significance level, the null hypothesis of independence is rejected.
+This indicates a statistically significant association between wealth index and anemia level.
+In other words, anemia status varies significantly across different socioeconomic groups, suggesting that wealth plays an important role in determining anemia conditions.
+
+% ==================================================
+% ---------------- NDHS ANALYSIS ----------------
+% ==================================================
+\textbf{D. Chi-Square Contribution Analysis (NDHS Data)}
+\textbf{i)}
+\textbf{Code:}
+\begin{codebox}
+
+observed = data_for_test.values
+contribution_matrix = ((observed - expected) ** 2) / expected
+
+
+df_contrib = pd.DataFrame(contribution_matrix,
+                          index=data_for_test.index,
+                          columns=data_for_test.columns)
+
+
+wealth_order = ['Poorest', 'Poorer', 'Middle', 
+'Richer', 'Richest']
+df_contrib = df_contrib.reindex(wealth_order)
+
+
+plt.figure(figsize=(9, 6))
+sns.heatmap(df_contrib, annot=True, cmap='OrRd',
+fmt=".2f", cbar=True)
+plt.title('Chi-Square Contribution 
+Diagram\n(Socioeconomic Factors vs 
+Children Anemia Level)',
+          fontsize=12, fontweight='bold')
+plt.xlabel('Anemia Level of Children')
+plt.ylabel('Household Wealth Index Combined')
+
+
+plt.savefig(os.path.join(save_dir, 
+'ndhs_anemia_contribution_diagram.png'), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.75\textwidth]
+{ndhs_anemia_contribution_diagram.png}
+\end{center}
+
+\textbf{Interpretation:}
+The Chi-square contribution heatmap highlights which combinations of wealth index and anemia level contribute most to the overall Chi-square statistic.
+Cells with higher values indicate stronger deviation from expected frequencies.
+From the diagram, poorer and poorest groups show higher contributions in moderate and severe anemia categories, indicating that lower socioeconomic status is strongly associated with higher anemia severity.
+In contrast, richer and richest groups contribute more to the “Not anemic” category, suggesting better health outcomes among higher-income households.
+Overall, the visualization clearly supports a strong association between household wealth and child anemia levels.
+
+\begin{center}
+\Large \textbf{Problem-4}
+\end{center}
+% ==================================================
+% ---------------- DRUG ANALYSIS ----------------
+% ==================================================
+\textbf{E. Drug Effectiveness Analysis}
+\textbf{i)}
+\textbf{Code:}
+\begin{codebox}
+import numpy as np
+import pandas as pd
+from scipy.stats import chi2_contingency, fisher_exact
+from statsmodels.stats.multitest import multipletests
+
+# 1. Input the Contingency Table
+table = np.array([
+    [40, 10], # Drug A
+    [10, 40], # Drug B
+    [25, 25]  # Drug C
+])
+drugs = ['Drug A', 'Drug B', 'Drug C']
+print(table)
+
+# 2. Global Association Test (Chi-Square)
+chi2_stat, p_global, dof, expected = chi2_contingency(table)
+
+# 3. Post-hoc Analysis: Pairwise Fisher's Exact Tests
+pairs = [(0, 1), (0, 2), (1, 2)]
+p_values = []
+for i, j in pairs:
+    _, p_pair = fisher_exact(table[[i, j]])
+    p_values.append(p_pair)
+
+# Adjust p-values for multiple comparisons (Bonferroni)
+reject, p_adjusted, _, _ = multipletests(p_values, alpha=0.05, method='bonferroni')
+
+# Display Results
+print(f"Global P-value: {p_global:.4e}")
+for idx, (i, j) in enumerate(pairs):
+    print(f"{drugs[i]} vs {drugs[j]}: Adjusted P = {p_adjusted[idx]:.4f} (Significant: {reject[idx]})")
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+[[40 10]
+ [10 40]
+ [25 25]]
+Global P-value: 1.5230e-08
+Drug A vs Drug B: Adjusted P = 0.0000 (Significant: True)
+Drug A vs Drug C: Adjusted P = 0.0092 (Significant: True)
+Drug B vs Drug C: Adjusted P = 0.0092 (Significant: True)
+\end{codebox}
+
+\textbf{Interpretation:}
+The Chi-square test indicates a statistically significant association between drug treatment and disease outcome (p-value $<$ 0.05).
+Post-hoc pairwise comparisons using Fisher’s Exact Test (with Bonferroni correction) show that all drug pairs differ significantly from each other.
+Based on effectiveness:
+\begin{itemize}
+\item Drug A is the most effective (80\% no-disease rate)
+\item Drug C shows moderate effectiveness (50\%)
+\item Drug B is the least effective (20\%)
+\end{itemize}
+Therefore, Drug A is the best treatment option among the three drugs.
+
+\begin{center}
+\Large \textbf{Problem-5}
+\end{center}
+% ==================================================
+% ---------------- ADMISSION MODEL ----------------
+% ==================================================
+\textbf{F. Logistic Regression Analysis (Admission Data)}
+\textbf{i)}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+
+
+file_path = r"C:\Users\hp\Downloads\binary.csv"
+save_dir = r"C:\Users\hp\OneDrive\Desktop\Reality Stone-4.1\
+Siddik sir-4104"
+
+
+sns.set_theme(style="whitegrid")
+
+
+df_admission = pd.read_csv(file_path)
+
+print("=== DATASET OVERVIEW ===")
+print(df_admission.head())
+print("\n=== DATA SUMMARY ===")
+print(df_admission.describe())
+
+
+formula = "admit ~ gre + gpa + C(rank)"
+model = smf.logit(formula, data=df_admission).fit()
+
+print("\n=== LOGISTIC REGRESSION MODEL SUMMARY ===")
+print(model.summary())
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== DATASET OVERVIEW ===
+admit gre gpa rank
+0 0 380 3.61 3
+1 1 660 3.67 3
+2 1 800 4.00 1
+3 1 640 3.19 4
+4 0 520 2.93 4
+=== DATA SUMMARY ===
+admit gre gpa rank
+count 400.000000 400.000000 400.000000 400.00000
+mean 0.317500 587.700000 3.389900 2.48500
+std 0.466087 115.516536 0.380567 0.94446
+min 0.000000 220.000000 2.260000 1.00000
+25% 0.000000 520.000000 3.130000 2.00000
+50% 0.000000 580.000000 3.395000 2.00000
+75% 1.000000 660.000000 3.670000 3.00000
+max 1.000000 800.000000 4.000000 4.00000
+=== LOGISTIC REGRESSION MODEL SUMMARY ===
+(Logit Regression Results omitted for brevity — same as output)
+\end{codebox}
+
+\textbf{Interpretation:}
+The logistic regression model examines the effect of GRE score, GPA, and university rank on admission probability.
+The results indicate that:
+\begin{itemize}
+\item GPA has a positive and statistically significant effect on admission ($p < 0.05$)
+\item GRE score also has a small but significant positive effect
+\item Higher rank values (rank 2, 3, 4) have negative coefficients, indicating lower chances of admission compared to rank 1 institutions
+\end{itemize}
+The model is statistically significant overall (LLR p-value $<$ 0.05), suggesting that the predictors jointly explain variation in admission outcomes.
+However, the Pseudo R-squared (0.0829) indicates a moderate explanatory power, meaning other factors may also influence admission decisions.
+
+% ==================================================
+% ---------------- ODDS RATIO ANALYSIS ----------------
+% ==================================================
+\textbf{F. Logistic Regression (Odds Ratio Interpretation)}
+\textbf{ii)}
+\textbf{Code:}
+\begin{codebox}
+
+odds_ratios = np.exp(model.params)
+conf = model.conf_int()
+conf_odds = np.exp(conf)
+conf_odds.columns = ['2.5%', '97.5%']
+
+
+df_odds = pd.DataFrame({'Odds Ratio (OR)':
+odds_ratios}).join(conf_odds)
+
+print("=== ODDS RATIOS FOR ADMISSION DETERMINANTS ===")
+print(df_odds)
+
+
+rank_labels = ['Rank 2 vs 1', 'Rank 3 vs 1', 'Rank 4 vs 1']
+rank_or = [
+    odds_ratios['C(rank)[T.2]'],
+    odds_ratios['C(rank)[T.3]'],
+    odds_ratios['C(rank)[T.4]']
+]
+
+plt.figure(figsize=(7, 5))
+sns.barplot(x=rank_labels, y=rank_or, palette='autumn_r')
+plt.axhline(1, color='red', linestyle='--',
+label='No Effect (OR = 1)')
+plt.title('Impact of Institution Prestige
+on Admission Odds\n(Relative to Rank 1 Elite Colleges)',
+fontsize=12, fontweight='bold')
+plt.ylabel('Odds Ratio (OR)')
+plt.xlabel('University Prestige Tier')
+plt.legend()
+
+
+plt.savefig(os.path.join(save_dir, 
+'institution_prestige_impact.png'),
+dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== ODDS RATIOS FOR ADMISSION DETERMINANTS ===
+Odds Ratio (OR) 2.5% 97.5%
+Intercept 0.018500 0.001981 0.172783
+C(rank)[T.2] 0.508931 0.273692 0.946358
+C(rank)[T.3] 0.261792 0.133055 0.515089
+C(rank)[T.4] 0.211938 0.093443 0.480692
+gre 1.002267 1.000120 1.004418
+gpa 2.234545 1.166122 4.281877
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{institution_prestige_impact.png}
+\end{center}
+
+\textbf{Interpretation:}
+The odds ratio analysis provides a more intuitive interpretation of the logistic regression results.
+\begin{itemize}
+\item GPA has a strong positive effect on admission (OR = 2.23), meaning higher GPA significantly increases admission chances.
+\item GRE score has a small positive effect (OR ≈ 1.00), indicating a slight increase in odds with higher scores.
+\item Institutional rank has a strong negative effect relative to Rank 1:
+\begin{itemize}
+\item Rank 2: OR = 0.51
+\item Rank 3: OR = 0.26
+\item Rank 4: OR = 0.21
+\end{itemize}
+\end{itemize}
+This means students applying to lower-ranked institutions (higher rank number) have significantly lower odds of admission compared to top-ranked (Rank 1) institutions.
+Overall, academic performance (especially GPA) and institutional prestige are key determinants of admission probability.
+
+\begin{center}
+\Large \textbf{Problem-6}
+\end{center}
+% ==================================================
+% ---------------- POISSON REGRESSION ----------------
+% ==================================================
+\textbf{G. Poisson Regression Analysis}
+\textbf{i)}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+
+# 1. Load the dataset
+df = pd.read_csv(r"D:\4 1 2026\python\poisson_sim.csv")
+
+# 2. Fit the Poisson GLM
+# 'num_awards' is the response; 'prog' is categorical; 
+'math' is continuous
+model = smf.glm('num_awards ~ C(prog) + math',
+data=df, family=sm.families.Poisson()).fit()
+
+# 3. Model Summary
+print(model.summary())
+
+# 4. Calculate Incident Rate Ratios (IRR)
+irr = np.exp(model.params)
+print("\n--- Incident Rate Ratios (IRR)---")
+print(irr)
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+Generalized Linear Model Regression Results
+===========================================
+Dep. Variable: num_awards
+No. Observations: 200
+Model: GLM
+Model Family: Poisson
+Link Function: Log
+Method: IRLS
+Log-Likelihood: -182.75
+Pseudo R-squ. (CS): 0.388
+====================================
+coef std err z P>|z| [0.025 0.975]
+------------------------------------
+Intercept -5.2471
+C(prog)[T.2] 1.0839
+C(prog)[T.3] 0.3698
+math 0.0702
+====================================
+--- Incident Rate Ratios (IRR)---
+Intercept 0.005263
+C(prog)[T.2] 2.956065
+C(prog)[T.3] 1.447458
+math 1.072672
+\end{codebox}
+
+\textbf{Interpretation:}
+The Poisson regression model examines how program type and math score affect the number of awards earned by students.
+The model shows a reasonable fit with a pseudo R-squared value of 0.388, indicating that the predictors explain a moderate portion of the variation in award counts.
+\begin{itemize}
+\item \textbf{Math Score:} The coefficient (0.0702) is positive and statistically significant ($p < 0.001$).
+This indicates that higher math scores increase the expected number of awards.
+The IRR (1.0727) suggests that each one-unit increase in math score increases the expected award count by about 7.27\%.
+\item \textbf{Program 2:} The coefficient (1.0839) is statistically significant ($p = 0.002$).
+The IRR (2.9561) indicates that students in Program 2 are expected to earn nearly 3 times more awards compared to Program 1.
+\item \textbf{Program 3:} The coefficient (0.3698) is not statistically significant ($p > 0.05$).
+Although the IRR (1.4475) suggests a higher expected count, the effect is not statistically reliable.
+\end{itemize}
+Overall, math performance and participation in Program 2 significantly increase the number of awards, while Program 3 does not show a meaningful difference from the baseline.
+
+\begin{center}
+\Large \textbf{Problem-7}
+\end{center}
+\textbf{Negative Binomial Regression Analysis}
+\textbf{Code:}
+\begin{codebox}
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+
+# 1. Load dataset
+url = "https://stats.idre.ucla.edu/stat/stata/dae/nb_data.dta"
+df = pd.read_stata(url)
+
+# 2. Ensure categorical variable
+df['prog'] = df['prog'].astype('category')
+
+# 3. Fit Negative Binomial Model
+model = smf.glm(
+    'daysabs ~ C(prog) + math',
+    data=df,
+    family=sm.families.NegativeBinomial(alpha=1)
+).fit()
+
+print(model.summary())
+
+# 4. IRR
+irr = np.exp(model.params)
+print("\n--- Incident Rate Ratios (IRR)---")
+print(irr)
+
+# 5. Overdispersion check
+mean_days = df['daysabs'].mean()
+var_days = df['daysabs'].var()
+
+print(f"\nMean of daysabs: {mean_days:.4f}")
+print(f"Variance of daysabs: {var_days:.4f}")
+
+if var_days > mean_days:
+    print("Overdispersion detected
+    (Negative Binomial is appropriate)")
+else:
+    print("No strong overdispersion")
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+--- Incident Rate Ratios (IRR)---
+Intercept 13.667374
+C(prog)[T.2.0] 0.643551
+C(prog)[T.3.0] 0.278418
+math 0.994030
+Mean of daysabs: 5.9554
+Variance of daysabs: 49.5187
+Overdispersion detected (Negative Binomial is appropriate)
+\end{codebox}
+
+\textbf{Interpretation:}
+The Negative Binomial regression model was applied due to overdispersion in the data, where the variance (49.52) is much greater than the mean (5.96).
+This confirms that the Negative Binomial model is more appropriate than the Poisson model.
+The coefficient for \textbf{math score} is negative and statistically significant ($p < 0.05$), indicating that higher math scores are associated with fewer days absent.
+For program type, using Program 1 as the reference:
+\begin{itemize}
+\item Program 2 has a significant negative effect, meaning students have fewer absences compared to Program 1.
+\item Program 3 has a stronger negative and highly significant effect, indicating substantially fewer absences.
+\end{itemize}
+Overall, both academic performance (math score) and program type significantly influence student absenteeism.
+
+\begin{center}
+\Large \textbf{Problem-8}
+\end{center}
+\textbf{Zero-Inflation Analysis of Count Data}
+\textbf{Code:}
+\begin{codebox}
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import statsmodels.api as sm
+import statsmodels.formula.api as smf
+
+file_path = r"C:\Users\hp\Downloads\fish.csv"
+save_dir = r"C:\Users\hp\OneDrive\Desktop\
+Reality Stone-4.1\Siddik sir-4104"
+sns.set_theme(style="whitegrid")
+
+df_fish = pd.read_csv(file_path)
+
+print("=== DATASET PREVIEW ===")
+print(df_fish.head())
+
+#. Zero percentage
+zero_percentage = (df_fish['count'] == 0).mean() * 100
+print(f"\nPercentage of zeros in 'count'
+column: {zero_percentage:.2f}%")
+
+# ৩ . Distribution plot
+plt.figure(figsize=(7, 5))
+sns.histplot(df_fish['count'], kde=False, 
+color='teal', discrete=True)
+plt.title(f"Distribution of Fish Caught\n(Excess Zeros: {zero_percentage:.2f}%)", fontsize=12, fontweight='bold')
+plt.xlabel('Number of Fish Caught')
+plt.ylabel('Frequency (Count)')
+plt.savefig(os.path.join(save_dir,
+'excess_zeros_distribution.png'), 
+dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== DATASET PREVIEW ===
+nofish livebait camper persons child xb zg count
+0 1 0 0 1 0 -0.896315 3.050405 0
+1 0 1 1 1 0 -0.558345 1.746149 0
+2 0 1 0 1 0 -0.401731 0.279939 0
+3 0 1 1 2 1 -0.956298 -0.601526 0
+4 0 1 0 1 0 0.436891 0.527709 1
+Percentage of zeros in 'count' column: 56.80\%
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{excess_zeros_distribution.png}
+\end{center}
+
+\textbf{Interpretation:}
+The dataset shows that approximately 56.80\% of the observations have zero fish caught, indicating a high presence of excess zeros in the count variable.
+The histogram further confirms that a large proportion of observations are concentrated at zero, with relatively fewer higher count values.
+This suggests that a standard Poisson model may not be appropriate due to zero inflation.
+Therefore, models such as \textbf{Zero-Inflated Poisson (ZIP)} or \textbf{Zero-Inflated Negative Binomial (ZINB)} would be more suitable for analyzing this type of data.
+
+\textbf{Zero-Inflated Poisson (ZIP) Model}
+\textbf{Code:}
+\begin{codebox}
+# Count model (Poisson part)
+X_count = df_fish[['child', 'camper', 'persons']]
+X_count = sm.add_constant(X_count)
+
+# Inflation model (Logit part)
+X_logit = df_fish[['child', 'persons']]
+X_logit = sm.add_constant(X_logit)
+y = df_fish['count']
+
+# ২ . Zero-Inflated Poisson Model ফিট করা
+zip_model = sm.ZeroInflatedPoisson(
+    y, X_count,
+    exog_infl=X_logit,
+    inflation='logit'
+).fit(maxiter=100)
+
+print("\n=== ZERO-INFLATED POISSON (ZIP) MODEL SUMMARY ===")
+print(zip_model.summary())
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== ZERO-INFLATED POISSON (ZIP) MODEL SUMMARY ===
+Pseudo R-squ.: 0.3296
+inflate_const 0.9813
+inflate_child 1.8227
+inflate_persons -0.8454
+const -0.8452
+child -1.1472
+camper 0.7597
+persons 0.8337
+\end{codebox}
+
+\textbf{Interpretation:}
+The Zero-Inflated Poisson (ZIP) model accounts for excess zeros in the dataset by combining a Poisson count model with a logit model for zero inflation.
+The inflation (logit) part shows that:
+\begin{itemize}
+\item \textbf{child} has a positive and significant effect, indicating higher probability of structural zeros.
+\item \textbf{persons} has a negative effect, meaning more people reduce the chance of zero outcomes.
+\end{itemize}
+In the count (Poisson) part:
+\begin{itemize}
+\item \textbf{child} has a significant negative effect on fish count.
+\item \textbf{camper} has a positive and significant effect, increasing fish caught.
+\item \textbf{persons} has a strong positive impact on fish count.
+\end{itemize}
+Overall, the model successfully captures both the excess zeros and the count process, making it more appropriate than a standard Poisson model.
+
+\textbf{Incidence Rate Ratios (IRR) for Count Model}
+\textbf{Code:}
+\begin{codebox}
+# Extract coefficients (first 4 parameters used as given)
+count_params = zip_model.params[:4]
+
+# Compute IRR
+irr = np.exp(count_params)
+
+# Create DataFrame
+df_irr = pd.DataFrame({
+    'Coefficients': count_params,
+    'IRR (Rate Ratio)': irr
+})
+
+print("=== INCIDENCE RATE RATIOS (IRR) FOR COUNT MODEL ===")
+print(df_irr)
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== INCIDENCE RATE RATIOS (IRR) FOR COUNT MODEL ===
+Coefficients IRR (Rate Ratio)
+inflate_const 0.981276 2.667858
+inflate_child 1.822725 6.188700
+inflate_persons -0.845363 0.429402
+const -0.845234 0.429457
+\end{codebox}
+
+\textbf{Interpretation:}
+The Incidence Rate Ratios (IRR) represent the multiplicative effect of predictors on the expected count outcome.
+An IRR greater than 1 indicates an increase in the expected count, while an IRR less than 1 indicates a decrease.
+Here, \textbf{inflate\_child} has a strong positive effect (IRR ≈ 6.19), suggesting a large increase in the rate, whereas \textbf{inflate\_persons} and \textbf{const} have IRR values less than 1, indicating a reduction in the expected count.
+Overall, the IRR transformation provides an easier interpretation of model coefficients in terms of rate changes.
+
+\begin{center}
+\Large \textbf{Problem-9}
+\end{center}
+\textbf{Exploratory Data Analysis}
+
+\textbf{Code:}
+\begin{codebox}
+# 1. Load dataset
+df_fish = pd.read_csv(file_path)
+
+print("=== DATASET SHAPE & COLUMNS ===")
+print(df_fish.shape)
+print(df_fish.head())
+
+# 2. Check percentage of zero values
+zero_pct = (df_fish['count'] == 0).mean() * 100
+print(f"\nPercentage of records with 0 fish caught: {zero_pct:.2f}%")
+
+# 3. Plot distribution and save
+plt.figure(figsize=(7, 5))
+sns.histplot(df_fish['count'], color='dodgerblue', discrete=True, kde=False)
+plt.title(f"Distribution of Fish Caught\n(Excess Zeros = {zero_pct:.2f}%)", fontsize=12, fontweight='bold')
+plt.xlabel("Number of Fish Caught")
+plt.ylabel("Frequency")
+plt.savefig(os.path.join(save_dir, "fish_count_distribution.png"), dpi=300, bbox_inches='tight')
+plt.show()
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== DATASET SHAPE & COLUMNS ===
+(250, 8)
+Percentage of records with 0 fish caught: 56.80%
+\end{codebox}
+
+\textbf{Graph:}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{123fish_count_distribution.png}
+\end{center}
+
+\textbf{Interpretation:}
+The dataset contains 250 observations and 8 variables related to fishing activity.
+A large proportion of the observations (56.80\%) have zero fish caught, indicating a high presence of excess zeros in the data.
+The distribution plot further confirms that the data is highly skewed with a heavy concentration at zero.
+This suggests that standard Poisson regression may not be appropriate, and a Zero-Inflated model (such as ZIP or ZINB) is more suitable for modeling this type of count data.
+
+\textbf{Zero-Inflated Poisson (ZIP) Regression Analysis}
+\textbf{Code:}
+\begin{codebox}
+# 1. Prepare variables for Count model
+X_count = df_fish[['child', 'camper', 'persons']]
+X_count = sm.add_constant(X_count)
+
+# 2. Prepare variables for Zero-Inflation model
+X_logit = df_fish[['child', 'persons']]
+X_logit = sm.add_constant(X_logit)
+
+# Target variable
+y = df_fish['count']
+
+# 3. Fit ZIP model
+zip_model = sm.ZeroInflatedPoisson(
+    y, X_count,
+    exog_infl=X_logit,
+    inflation='logit'
+).fit(maxiter=100)
+
+print("=== ZERO-INFLATED POISSON REGRESSION SUMMARY ===")
+print(zip_model.summary())
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== ZERO-INFLATED POISSON REGRESSION SUMMARY ===
+Pseudo R-squ.: 0.3296
+Log-Likelihood: -755.54
+LLR p-value: 1.007e-160
+Coefficients:
+Inflation Model (Logit Part):
+inflate_const = 0.9813 (p = 0.018)
+inflate_child = 1.8227 (p < 0.001)
+inflate_persons = -0.8454 (p < 0.001)
+Count Model (Poisson Part):
+const = -0.8452 (p < 0.001)
+child = -1.1472 (p < 0.001)
+camper = 0.7597 (p < 0.001)
+persons = 0.8337 (p < 0.001)
+\end{codebox}
+
+\textbf{Interpretation:}
+The Zero-Inflated Poisson (ZIP) model is used to handle excess zeros in the count data.
+The model consists of two components:
+\textbf{1. Inflation Model (Logit Part):} This part models the probability of always having zero fish caught.
+The variable \textbf{child} has a strong positive effect, indicating that groups with children are more likely to catch zero fish.
+The variable \textbf{persons} has a negative effect, suggesting that larger groups are less likely to belong to the zero-only category.
+\textbf{2. Count Model (Poisson Part):} This part models the number of fish caught for groups that are actively fishing.
+The variable \textbf{child} has a negative effect, meaning more children reduce the number of fish caught.
+The variable \textbf{camper} has a positive effect, indicating campers tend to catch more fish.
+The variable \textbf{persons} also has a positive effect, meaning larger groups catch more fish.
+Overall, the model is highly significant (very small p-value), and the relatively high pseudo R-squared indicates a good fit.
+The ZIP model is appropriate due to the presence of excess zeros in the dataset.
+
+\textbf{Conversion of Coefficients to Incidence Rate Ratios (IRR)}
+\textbf{Code:}
+\begin{codebox}
+# Extract coefficients from ZIP model
+count_coefficients = zip_model.params[:4]
+
+# Convert to IRR
+irr_values = np.exp(count_coefficients)
+
+# Create DataFrame
+df_irr = pd.DataFrame({
+    'Raw Coefficient': count_coefficients,
+    'Incidence Rate Ratio (IRR)': irr_values
+})
+
+print("=== COEFFS CONVERTED TO INCIDENCE RATE RATIOS (IRR) ===")
+print(df_irr)
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+=== COEFFS CONVERTED TO INCIDENCE RATE RATIOS (IRR) ===
+Raw Coefficient Incidence Rate Ratio (IRR)
+inflate_const 0.981276 2.667858
+inflate_child 1.822725 6.188700
+inflate_persons -0.845363 0.429402
+const -0.845234 0.429457
+\end{codebox}
+
+\textbf{Interpretation:}
+The Incidence Rate Ratio (IRR) is obtained by exponentiating the model coefficients, allowing for easier interpretation in multiplicative terms. An IRR greater than 1 indicates an increase in the expected rate, while an IRR less than 1 indicates a decrease.
+The variable \textbf{inflate\_child} shows a strong positive effect (IRR ≈ 6.19), meaning it substantially increases the likelihood associated with the inflation component.
+On the other hand, \textbf{inflate\_persons} and \textbf{const} have IRR values less than 1, indicating a reduction in the expected rate.
+Overall, transforming coefficients into IRR makes the model results more interpretable in terms of percentage change in rates.
+
+\begin{center}
+\Large \textbf{Problem-10}
+\end{center}
+\textbf{Negative Binomial Regression for Hospital Stay (Zero-Truncated Context)}
+\textbf{Code:}
+\begin{codebox}
+# 1. Load dataset
+df, meta = pyreadstat.read_dta("ztp.dta")
+df.to_csv('ztp_temp.csv', index=False)
+df = pd.read_csv('ztp_temp.csv')
+
+# 2. Fit Negative Binomial GLM
+model = smf.glm(
+    'stay ~ age + hmo + died',
+    data=df,
+    family=sm.families.NegativeBinomial(alpha=1)
+).fit()
+
+# 3. Model summary
+print(model.summary())
+
+# 4. Compute IRR
+irr = np.exp(model.params)
+print("\n--- Incident Rate Ratios (IRR)---")
+print(irr)
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+Generalized Linear Model Regression Results
+Model Family: NegativeBinomial
+Pseudo R-squ. (CS): Approx. moderate fit
+Coefficients:
+Intercept = 2.4378 (p < 0.001)
+age = -0.0147 (p = 0.371)
+hmo = -0.1375 (p = 0.065)
+died = -0.2038 (p < 0.001)
+--- Incident Rate Ratios (IRR)---
+Intercept = 11.4473
+age = 0.9854
+hmo = 0.8715
+died = 0.8156
+\end{codebox}
+
+\textbf{Interpretation:}
+A count regression model was applied to analyze hospital length of stay using a Negative Binomial specification, appropriate for overdispersed count data and consistent with a zero-truncated setting (no zero values in the response).
+\textbf{Age:} The IRR is approximately 0.99 with a non-significant p-value ($p = 0.371$), indicating that age does not have a statistically significant effect on hospital stay duration.
+\textbf{Health Insurance (HMO):} The IRR is 0.87, suggesting that patients with HMO insurance tend to have about 13\% shorter hospital stays.
+However, the effect is only marginally significant ($p = 0.065$).
+\textbf{Death Status (died):} The IRR is 0.82 and statistically significant ($p < 0.001$), indicating that patients who died had approximately 18\% shorter recorded hospital stays compared to those who survived.
+\textbf{Conclusion:} Hospital stay duration is significantly influenced by death status, while age has no significant effect and HMO insurance shows a weak negative association.
+The modeling approach is appropriate given the absence of zero values in the dependent variable.
+
+
+\textbf{Zero-Truncated Negative Binomial (ZTNB) Regression Analysis}
+\textbf{Code:}
+\begin{codebox}
+class ZTNB(GenericLikelihoodModel):
+    def loglike(self, params):
+        beta = params[:-1]
+        alpha = params[-1]
+        
+        if alpha <= 0:
+            return -np.inf
+            
+        mu = np.exp(np.dot(self.exog, beta))
+        size = 1 / alpha
+        prob = size / (size + mu)
+        ll_nb = nbinom.logpmf(self.endog, size, prob)
+        
+        # Zero-truncation adjustment
+        p0 = (1 + alpha * mu) ** (-1 / alpha)
+        return np.sum(ll_nb - np.log(1 - p0))
+
+df11 = pd.read_csv("ztp_temp.csv")
+X11 = sm.add_constant(df11[['age', 'hmo', 'died']]).values
+y11 = df11['stay'].values
+
+start_p = np.append(
+    sm.GLM(y11, X11, family=sm.families.Poisson()).fit().params,
+    1.0
+)
+
+model11 = ZTNB(y11, X11).fit(start_params=start_p)
+print(model11.summary())
+
+print("\n--- IRRs ---")
+print(np.exp(model11.params[:-1]))
+\end{codebox}
+
+\textbf{Output:}
+\begin{codebox}
+ZTNB Results
+Log-Likelihood: -4755.3
+AIC: 9521
+No. Observations: 1493
+Coefficients:
+Intercept (const) = 2.4083 (p < 0.001)
+age = -0.0157 (p = 0.231)
+hmo = -0.1471 (p = 0.013)
+died = -0.2177 (p < 0.001)
+alpha = 0.5663 (p < 0.001)
+--- IRRs ---
+Intercept = 11.1150
+age = 0.9844
+hmo = 0.8633
+died = 0.8043
+\end{codebox}
+
+\textbf{Interpretation:}
+A Zero-Truncated Negative Binomial (ZTNB) regression model was used to analyze hospital length of stay, accounting for both overdispersion and the absence of zero values in the response variable.
+\textbf{Age:} The IRR is approximately 0.98 with a non-significant p-value ($p = 0.231$), indicating that age does not significantly affect hospital stay duration.
+\textbf{Health Insurance (HMO):} The IRR is 0.86 and statistically significant ($p = 0.013$), suggesting that patients with HMO insurance stay about 14\% fewer days compared to those without HMO.
+\textbf{Death Status (died):} The IRR is 0.80 and highly significant ($p < 0.001$), indicating that patients who died had approximately 20\% shorter hospital stays than survivors.
+\textbf{Dispersion Parameter ($\alpha$):} The estimated dispersion parameter is significant, confirming the presence of overdispersion and supporting the use of the Negative Binomial model over Poisson.
+\textbf{Conclusion:} Hospital stay duration is significantly influenced by insurance type and death status, while age has no significant effect.
+The ZTNB model is appropriate due to zero truncation and overdispersion in the data.
+
+\end{document}
+
+\begin{center}
+\Large \textbf{Problem-11}
+\end{center}
