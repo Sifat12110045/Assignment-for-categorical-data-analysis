@@ -1,1 +1,1 @@
-# Assignment-for-categorical-data-analysis
+# Assignment-on-categorical-data-analysis
